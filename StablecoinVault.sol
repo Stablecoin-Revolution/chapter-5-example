@@ -331,9 +331,9 @@ contract StablecoinVault {
                 vault.collateralAmount = 0;
                 totalCollateral -= remaining;
                 
-                (bool sent, ) = user.call{value: remaining}("");
+                (bool sentToOwner, ) = user.call{value: remaining}("");
                 // 如果发送失败，保留在合约中
-                if (sent) {
+                if (sentToOwner) {
                     emit CollateralRemoved(user, remaining);
                 }
             }
@@ -341,8 +341,8 @@ contract StablecoinVault {
         }
         
         // 转移抵押品给清算人
-        (bool sent, ) = msg.sender.call{value: collateralValue}("");
-        if (!sent) {
+        (bool sentToLiquidator, ) = msg.sender.call{value: collateralValue}("");
+        if (!sentToLiquidator) {
             revert TransferFailed();
         }
         
